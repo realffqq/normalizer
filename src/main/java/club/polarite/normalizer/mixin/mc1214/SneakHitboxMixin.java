@@ -1,4 +1,4 @@
-package club.polarite.normalizer.mixin;
+package club.polarite.normalizer.mixin.mc1214;
 
 import club.polarite.normalizer.config.ConfigManager;
 

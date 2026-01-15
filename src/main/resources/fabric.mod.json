@@ -5,12 +5,12 @@
 	"name": "Normal1.8zer",
 	"description": "Revert some game mechanics back to what they were in 1.8",
 	"authors": [
-		"Polarograph"
+		"ffqq"
 	],
 	"contact": {
-		"homepage": "https://github.com/polarograph/normalizer",
-		"sources": "https://github.com/polarograph/normalizer",
-		"issues": "https://github.com/polarograph/normalizer/issues"
+		"homepage": "https://github.com/ffqq/normalizer",
+		"sources": "https://github.com/ffqq/normalizer",
+		"issues": "https://github.com/ffqq/normalizer/issues"
 	},
 	"license": "MIT",
 	"icon": "assets/normalizer/icon.png",
@@ -24,11 +24,12 @@
 		]
 	},
 	"mixins": [
-		"normalizer.mixins.json"
+		"normalizer.mixins.json",
+		"normalizer.mixins.${mixin_type}.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.13",
-		"minecraft": "~1.21.4",
+		"minecraft": ">=1.21.4",
 		"java": ">=21",
 		"fabric-api": "*",
 		"cloth-config": ">=17.0.144",

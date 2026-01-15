@@ -5,11 +5,9 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"BedBlockMixin",
-		"BucketItemMixin",
 		"DisableCrawlMixin",
 		"DisableSwimMixin",
 		"SneakDesyncFixMixin",
-		"SneakHitboxMixin",
 		"SprintResetMixin"
 	],
 	"injectors": {

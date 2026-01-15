@@ -9,7 +9,7 @@ import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 public class NormalizerConfigScreen {
     public static Screen create(Screen parent) {
         NormalizerConfig config = ConfigManager.getConfig();
-        String mcVersion = SharedConstants.getCurrentVersion().getName(); // .name() in 1.21.6, automatically gonna be changed at build-time by gradle 👍️
+        String mcVersion = SharedConstants.getCurrentVersion().name(); // .getName() in 1.21.4-5, automatically gonna be changed at build-time by gradle 👍️
         String installedVersion = VersionTool.getInstalledVersion();
 
         ConfigBuilder builder = ConfigBuilder.create()

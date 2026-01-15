@@ -6,6 +6,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.SharedConstants;
 
@@ -27,8 +28,15 @@ public abstract class SprintResetMixin extends AbstractClientPlayer {
         super(clientLevel, gameProfile);
     }
 
-    @Shadow
-    protected abstract boolean hasBlindness();
+    /**
+     * hasBlindness from <1.21.8.
+     * this is because in 1.21.9+ they removed hasBlindness from LocalPlayer
+     * @return true/false
+     */
+    @Unique
+    private boolean hasBlindness() {
+        return this.hasEffect(MobEffects.BLINDNESS);
+    }
 
     @Shadow
     public abstract boolean isMovingSlowly();
@@ -44,7 +52,7 @@ public abstract class SprintResetMixin extends AbstractClientPlayer {
     }
 
     @Unique
-    String version = SharedConstants.getCurrentVersion().getName(); // .name() in 1.21.6, automatically gonna be changed at build-time by gradle 👍️
+    String version = SharedConstants.getCurrentVersion().name(); // .getName() in 1.21.4-5, automatically gonna be changed at build-time by gradle 👍️
 
     @Inject(
             method = "aiStep",

@@ -1,26 +1,42 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 plugins {
-	id 'fabric-loom' version "1.10-SNAPSHOT"
+	id 'fabric-loom' version "1.14-SNAPSHOT"
 	id 'maven-publish'
 }
 
-def is1216 = project.hasProperty("mc_target") && project.mc_target == "1.21.6"
+def is1215 = project.hasProperty("mc_target") && (project.mc_target == "1.21.5" || project.mc_target == "1.21.4")
+def is1216 = project.hasProperty("mc_target") && (project.mc_target == "1.21.6" || project.mc_target == "1.21.7")
+def is12111 = project.hasProperty("mc_target") && project.mc_target == "1.21.11"
 
 ext {
-	minecraft_version = is1216 ? "1.21.6" : "1.21.5"
-	yarn_mappings = is1216 ? "1.21.6+build.1" : "1.21.5+build.1"
-	loader_version = is1216 ? "0.16.14" : "0.16.13"
-	fabric_version = is1216 ? "0.127.1+1.21.6" : "0.121.0+1.21.5"
-
-	target_version = is1216 ? "1.21.6" : "1.21.4-1.21.5"
+	if (is12111) {
+		minecraft_version = "1.21.11"
+		loader_version = "0.18.4"
+		fabric_version = "0.141.1+1.21.11"
+		target_version = "1.21.11"
+	} else if (is1216) {
+		minecraft_version = "1.21.6"
+		loader_version = "0.16.14"
+		fabric_version = "0.127.1+1.21.6"
+		target_version = "1.21.6-1.21.7"
+	} else if (is1215) {
+		minecraft_version = "1.21.5"
+		loader_version = "0.16.13" // why am i not updating this?
+		fabric_version = "0.121.0+1.21.5"
+		target_version = "1.21.4-1.21.5"
+	}
 }
-
-// version print
-println "==> Building for Minecraft ${minecraft_version} " +
-		"with mappings ${yarn_mappings} " +
-		"and Fabric Loader ${loader_version}"
 
 version = project.mod_version
 group   = project.maven_group
+
+// version print
+println "==> Building Normalizer ${version} for Minecraft ${minecraft_version} " +
+		"with Mojang mappings " +
+		"and Fabric Loader ${loader_version}"
+
 
 base {
 	archivesName = "${project.archives_base_name}-${target_version}"
@@ -40,29 +56,60 @@ dependencies {
 	modApi("me.shedaniel.cloth:cloth-config-fabric:17.0.144") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-	modApi "com.terraformersmc:modmenu:13.0.2"
+	modApi "com.terraformersmc:modmenu:15.0.1"
 }
 
 processResources {
 	inputs.property "version", project.version
+	inputs.property "is12111", is12111
+	inputs.property "is1216", is1216
+	inputs.property "is1215", is1215
 
 	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
+		expand(
+				"version": inputs.properties.version,
+				"mixin_type": (is12111 ? "mc12111" : "mc1214")
+		)
 	}
 }
 
-task preprocessJava(type: Copy) {
+tasks.register('preprocessJava', Copy) {
+	doFirst {
+		delete "$buildDir/preprocessedSrc"
+	}
+
 	from 'src/main/java'
 	into "$buildDir/preprocessedSrc"
+
+	if (is12111) {
+		exclude '**/mixin/mc1214/**'
+	} else {
+		exclude '**/mixin/mc12111/**'
+	}
+
 	include '**/*.java'
+
 	filter { String line ->
-		if (is1216) {
-			return line.replace(
-					'getCurrentVersion().getName()',
-					'getCurrentVersion().name()'
+		if (is1215 || is1216) {
+			line = line.replace(
+					'net.minecraft.util.Util',
+					'net.minecraft.Util'
 			)
-		} else {
-			return line
+		}
+
+		if (is1215) {
+			line = line.replace(
+					'getCurrentVersion().name()',
+					'getCurrentVersion().getName()',
+			)
+		}
+
+		return line
+	}
+
+	doLast {
+		fileTree("$buildDir/preprocessedSrc").matching {
+			include '**/*.java'
 		}
 	}
 }

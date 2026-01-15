@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "club.polarite.normalizer.mixin.mc1214",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"BucketItemMixin",
+		"SneakHitboxMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

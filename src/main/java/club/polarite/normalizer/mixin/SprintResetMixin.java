@@ -6,7 +6,6 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.SharedConstants;
 
@@ -28,22 +27,12 @@ public abstract class SprintResetMixin extends AbstractClientPlayer {
         super(clientLevel, gameProfile);
     }
 
-    /**
-     * hasBlindness from <1.21.8.
-     * this is because in 1.21.9+ they removed hasBlindness from LocalPlayer
-     * @return true/false
-     */
-    @Unique
-    private boolean hasBlindness() {
-        return this.hasEffect(MobEffects.BLINDNESS);
-    }
-
     @Shadow
     public abstract boolean isMovingSlowly();
 
     @Unique
     private boolean shouldStopSprinting() {
-        return this.hasBlindness() || this.isMovingSlowly() || this.isPassenger() && !this.isRidingCamel() || this.isUsingItem() && !this.isPassenger() && !this.isUnderWater();
+        return this.isMovingSlowly() || this.isPassenger() && !this.isRidingCamel() || this.isUsingItem() && !this.isPassenger() && !this.isUnderWater();
     }
 
     @Unique
